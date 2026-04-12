@@ -1,0 +1,12 @@
+---
+# List of filesystems mounts to manage.
+# Each entry defiens a mount point and its backing device.
+# Optional keys include fstype, opts and state.
+mount:
+  - path: /molecule_1
+    src: /dev/molecule_1
+    fstype: ext4
+
+  - path: /molecule_2
+    src: /dev/molecule_2
+    fstype: ext4

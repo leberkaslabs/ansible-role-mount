@@ -1,0 +1,32 @@
+---
+- name: Install required packages
+  ansible.builtin.package:
+    name: "{{ mount_packages }}"
+    state: present
+
+- name: Ensure configured filesystems are mounted
+  ansible.posix.mount:
+    fstype: "{{ item.fstype | default(omit) }}"
+    opts: "{{ item.opts | default(omit) }}"
+    path: "{{ item.path | ansible.builtin.mandatory }}"
+    src: "{{ item.src | default(omit) }}"
+    state: "{{ item.state | default('mounted') }}"
+  loop: "{{ mount }}"
+  loop_control:
+    label: "{{ item.path }}"
+  register: mount_state
+  when: mount is defined and mount | length > 0
+
+# We avoid using a handler because the remount must happen immediately.
+# Using a sync point would flush other handlers, which is not desired.
+- name: Remount filesystems that changed configuration
+  ansible.posix.mount:
+    path: "{{ remount.item.path }}"
+    state: remounted
+  loop: >-
+    {{ mount_state.results
+      | selectattr('changed')
+      | selectattr('invocation.module_args.state', 'equalto', 'mounted') }}
+  loop_control:
+    label: "{{ remount.item.path }}"
+    loop_var: remount

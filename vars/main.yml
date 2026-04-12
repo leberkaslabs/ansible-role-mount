@@ -1,0 +1,12 @@
+---
+_mount_packages:
+  default: []
+  Debian:
+    - cifs-utils
+    - nfs-common
+  RedHat:
+    - cifs-utils
+    - nfs-utils
+mount_packages: >-
+  {{ _mount_packages[ansible_facts.os_family] | default(_mount_packages['default']) }}
+

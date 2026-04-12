@@ -1,0 +1,41 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: true
+
+  vars_files:
+    - main.yml
+
+  pre_tasks:
+    - name: Update cache (Debian)
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_facts.os_family == "Debian"
+
+    - name: Install required packages
+      ansible.builtin.package:
+        name: e2fsprogs
+        state: present
+
+  tasks:
+    - name: Create pseudo disk files
+      ansible.builtin.command:
+        argv:
+          - truncate
+          - -s
+          - 20M
+          - "{{ item.src }}"
+        creates: "{{ item.src }}"
+      loop: "{{ mount }}"
+      loop_control:
+        label: "{{ item.src }}"
+
+    - name: Format pseudo disks with specified filesystems
+      community.general.filesystem:
+        fstype: "{{ item.fstype }}"
+        device: "{{ item.src }}"
+        state: present
+      loop: "{{ mount }}"
+      loop_control:
+        label: "{{ item.src }}"

@@ -1,0 +1,33 @@
+---
+argument_specs:
+  main:
+    author: Niclas Spreng
+    description: Manage mounts on linux systems.
+    short_description: mount
+    options:
+      mount:
+        type: list
+        elements: dict
+        required: false
+        description: List of filesystems mounts to manage.
+        options:
+          fstype:
+            type: str
+            required: false
+            description: Filesystem type.
+          opts:
+            type: str
+            required: false
+            description: Mount options.
+          path:
+            type: str
+            required: true
+            description: Path to the mount point.
+          src:
+            type: str
+            required: false
+            description: Device (or NFS volume, or something else) to be mounted on path.
+          state:
+            type: str
+            default: mounted
+            description: Mount state.

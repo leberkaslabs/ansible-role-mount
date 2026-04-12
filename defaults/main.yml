@@ -1,0 +1,8 @@
+---
+# List of filesystems mounts to manage.
+# Each entry defiens a mount point and its backing device.
+# Optional keys include fstype, opts and state.
+mount: []
+  # - path: /mnt/shared_data
+  #   src: 192.168.1.100:/nfs/ssd/shared_data
+  #   fstype: nfs
